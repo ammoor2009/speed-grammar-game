@@ -2,7 +2,7 @@ name: CAMeL Tools Automatic Question Generator
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
@@ -22,9 +22,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install camel-tools
-          camel_data -d mle
+          camel_data -i mle
 
-      - name: Generate Questions Bank
+      - name: Run Question Generator
         run: python generate_questions.py
 
       - name: Commit and Push Updated JSON
@@ -33,4 +33,4 @@ jobs:
           git config --local user.name "GitHub Action"
           git add easy_bank.json
           git commit -m "تحديث تلقائي لبنك الأسئلة عبر CAMeL Tools" || exit 0
-          git push
+          git push origin HEAD
