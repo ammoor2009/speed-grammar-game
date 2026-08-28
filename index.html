@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحدي الطلاقة النحوية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #1E3A8A; --secondary: #D97706; --bg: #F3F4F6; --card: #FFFFFF; }
+        body { font-family: 'Tajawal', sans-serif; background-color: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; }
+        .container { background: var(--card); padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 600px; text-align: center; }
+        h1 { color: var(--primary); margin-bottom: 0.5rem; }
+        .btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 1.1rem; cursor: pointer; margin: 5px; transition: 0.3s; font-family: 'Tajawal', sans-serif;}
+        .btn:hover { background: #162861; transform: scale(1.05); }
+        .option-btn { background: var(--secondary); display: block; width: 100%; margin: 10px 0; font-size: 1.3rem; padding: 15px; }
+        .option-btn:hover { background: #B45309; }
+        #timer-bar-container { width: 100%; background: #e5e7eb; border-radius: 10px; height: 20px; margin: 20px 0; overflow: hidden; display: none; }
+        #timer-bar { height: 100%; background: #10B981; width: 100%; transition: width 1s linear, background 0.3s; }
+        .hidden { display: none !important; }
+        .question-text { font-size: 1.6rem; font-weight: bold; margin: 20px 0; line-height: 1.5; color: var(--primary); }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
+        .wrong-shake { animation: shake 0.3s; background: #EF4444 !important; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="menu-screen">
+    <h1>تحدي الطلاقة النحوية</h1>
+    <p>لديك 60 ثانية للإجابة على 10 أسئلة بشكل صحيح لتجاوز المرحلة.</p>
+    <div id="level-selection">
+        <button class="btn" onclick="startGame('easy')">مستوى سهل</button>
+        <button class="btn" onclick="startGame('medium')">مستوى متوسط</button>
+        <button class="btn" onclick="startGame('hard')">مستوى صعب</button>
+    </div>
+</div>
+
+<div class="container hidden" id="game-screen">
+    <div style="display: flex; justify-content: space-between; font-weight: bold;">
+        <span id="stage-display">المرحلة: 1 / 10</span>
+        <span id="score-display">النقاط: 0 / 10</span>
+    </div>
+    <div id="timer-bar-container"><div id="timer-bar"></div></div>
+    <div id="time-text" style="font-size:1.2rem; font-weight:bold; color:#EF4444;">60 ثانية</div>
+    <div class="question-text" id="question-text">جاري تحميل السؤال...</div>
+    <div id="options-container"></div>
+</div>
+
+<div class="container hidden" id="result-screen">
+    <h2 id="result-title"></h2>
+    <p id="result-desc" style="font-size:1.2rem;"></p>
+    <button class="btn hidden" id="next-stage-btn" onclick="nextStage()">المرحلة التالية</button>
+    <button class="btn" onclick="location.reload()">العودة للرئيسية</button>
+</div>
+
+<script>
+    const QUESTIONS_BANK = {
+        'easy': [
+            {"q": "القصيدةُ الجاهليةُ ___ بالصور الفنية.", "options": ["مليئةٌ", "مليءٌ"], "answer": "مليئةٌ"},
+            {"q": "الفرزدقُ شاعرٌ ___ في الهجاء.", "options": ["مفلقٌ", "مفلقةٌ"], "answer": "مفلقٌ"},
+            {"q": "النصُّ السرديُّ ___ بعناية.", "options": ["مكتوبٌ", "مكتوبةٌ"], "answer": "مكتوبٌ"},
+            {"q": "اللغةُ العربيةُ ___ للتعبير عن أدق المشاعر.", "options": ["قادرةٌ", "قادرٌ"], "answer": "قادرةٌ"},
+            {"q": "هذا الطالبُ ___ في دراسة العروض.", "options": ["متميزٌ", "متميزةٌ"], "answer": "متميزٌ"},
+            {"q": "الفتاةُ ___ روايةً لنجيب محفوظ.", "options": ["قرأتْ", "قرأَ"], "answer": "قرأتْ"},
+            {"q": "الكتابُ ___ على الرف.", "options": ["موضوعٌ", "موضوعةٌ"], "answer": "موضوعٌ"},
+            {"q": "المحاضرةُ ___ غداً صباحاً.", "options": ["مقررةٌ", "مقررٌ"], "answer": "مقررةٌ"},
+            {"q": "العلمُ ___ طريقَ النجاح.", "options": ["يُنيرُ", "تُنيرُ"], "answer": "يُنيرُ"},
+            {"q": "الجامعةُ ___ أبوابها للباحثين.", "options": ["تفتحُ", "يفتحُ"], "answer": "تفتحُ"}
+        ],
+        'medium': [
+            {"q": "الباحثان في النقد ___ في تحليل النص.", "options": ["متعمقان", "متعمقين"], "answer": "متعمقان"},
+            {"q": "المهندساتُ ___ على تصميم المشروع.", "options": ["أشرفْنَ", "أشرفوا"], "answer": "أشرفْنَ"},
+            {"q": "رأيتُ الطالبتين ___ في المكتبة.", "options": ["تدرسان", "يدرسان"], "answer": "تدرسان"},
+            {"q": "المعلمون ___ رسالتهم بإخلاص.", "options": ["يؤدون", "يؤدين"], "answer": "يؤدون"},
+            {"q": "قرأتُ كتابين ___ في البلاغة.", "options": ["مفيدين", "مفيدان"], "answer": "مفيدين"},
+            {"q": "الشاعرتان ___ قصيدتين رائعتين.", "options": ["ألقتا", "ألقيا"], "answer": "ألقتا"},
+            {"q": "المثقفون ___ لبناء الوعي المجتمعي.", "options": ["يسعون", "يسعن"], "answer": "يسعون"},
+            {"q": "مررتُ بالباحثين ___ يناقشون الرسالة.", "options": ["الذين", "اللواتي"], "answer": "الذين"},
+            {"q": "القصيدتان ___ من بحر الطويل.", "options": ["منظومتان", "منظومتين"], "answer": "منظومتان"},
+            {"q": "الأستاذان ___ المحاضرة ببراعة.", "options": ["أدارا", "أداروا"], "answer": "أدارا"}
+        ],
+        'hard': [
+            {"q": "الجبالُ ___ تعكس شموخ الطبيعة.", "options": ["الشامخةُ", "الشامخون"], "answer": "الشامخةُ"},
+            {"q": "العمالُ ___ إنجاز المهام المطلوبة.", "options": ["أتمّوا", "أتمَّن"], "answer": "أتمّوا"},
+            {"q": "الأيامُ ___ كلمح البصر.", "options": ["تمضي", "يمضون"], "answer": "تمضي"},
+            {"q": "العلماءُ ___ مصابيحُ الدجى.", "options": ["العاملون", "العاملين"], "answer": "العاملون"},
+            {"q": "هذه الأبحاثُ ___ لطلاب الدراسات العليا.", "options": ["مخصصةٌ", "مخصصون"], "answer": "مخصصةٌ"},
+            {"q": "النساءُ ___ في بناء المجتمع.", "options": ["يشاركنَ", "يشاركون"], "answer": "يشاركنَ"},
+            {"q": "المقاييسُ العروضيةُ ___ لضبط الشعر.", "options": ["وُضِعتْ", "وُضِعوا"], "answer": "وُضِعتْ"},
+            {"q": "الرجالُ ___ يدافعون عن الحق.", "options": ["الأقوياءُ", "القوياتُ"], "answer": "الأقوياءُ"},
+            {"q": "الأشجارُ ___ ثمارها في الصيف.", "options": ["تُطرحُ", "يُطرحُ"], "answer": "تُطرحُ"},
+            {"q": "القصائدُ الطوالُ ___ بالمعلقات.", "options": ["تُسمّى", "يُسمَّون"], "answer": "تُسمّى"}
+        ]
+    };
+
+    for(let key in QUESTIONS_BANK){
+        let base = QUESTIONS_BANK[key];
+        QUESTIONS_BANK[key] = [].concat(base, base, base, base, base); 
+    }
+
+    let currentLevel = '';
+    let currentStage = 1;
+    let activeQuestions = [];
+    let currentQIndex = 0;
+    let score = 0;
+    let timeLeft = 60;
+    let timerInterval;
+
+    function startGame(level) {
+        currentLevel = level;
+        document.getElementById('menu-screen').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
+        document.getElementById('timer-bar-container').style.display = 'block';
+        
+        let shuffled = [...QUESTIONS_BANK[level]].sort(() => 0.5 - Math.random());
+        activeQuestions = shuffled.slice(0, 10);
+        
+        startStage();
+    }
+
+    function startStage() {
+        currentQIndex = 0;
+        score = 0;
+        timeLeft = 60;
+        updateScoreBoard();
+        loadQuestion();
+        
+        clearInterval(timerInterval);
+        document.getElementById('timer-bar').style.width = '100%';
+        document.getElementById('timer-bar').style.background = '#10B981';
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            document.getElementById('time-text').innerText = timeLeft + " ثانية";
+            let percentage = (timeLeft / 60) * 100;
+            document.getElementById('timer-bar').style.width = percentage + '%';
+            
+            if(timeLeft <= 10) document.getElementById('timer-bar').style.background = '#EF4444';
+            if (timeLeft <= 0) endGame(false);
+        }, 1000);
+    }
+
+    function loadQuestion() {
+        if (currentQIndex >= 10) { endGame(true); return; }
+        
+        const qData = activeQuestions[currentQIndex];
+        document.getElementById('question-text').innerText = qData.q;
+        
+        const optsContainer = document.getElementById('options-container');
+        optsContainer.innerHTML = '';
+        
+        let opts = [...qData.options].sort(() => Math.random() - 0.5);
+        
+        opts.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'btn option-btn';
+            btn.innerText = opt;
+            btn.onclick = (e) => checkAnswer(opt, qData.answer, e.target);
+            optsContainer.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selected, correct, btnElement) {
+        if (selected === correct) {
+            score++;
+            currentQIndex++;
+            updateScoreBoard();
+            loadQuestion();
+        } else {
+            btnElement.classList.add('wrong-shake');
+            setTimeout(() => {
+                btnElement.classList.remove('wrong-shake');
+                currentQIndex++;
+                updateScoreBoard();
+                loadQuestion();
+            }, 300);
+        }
+    }
+
+    function updateScoreBoard() {
+        document.getElementById('score-display').innerText = `النقاط: ${score} / 10`;
+        document.getElementById('stage-display').innerText = `المرحلة: ${currentStage} / 10`;
+    }
+
+    function endGame(completed) {
+        clearInterval(timerInterval);
+        document.getElementById('game-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+        
+        const nextBtn = document.getElementById('next-stage-btn');
+        if (score >= 8 && currentStage < 10) {
+            document.getElementById('result-title').innerText = "رائع! اجتزت المرحلة.";
+            document.getElementById('result-title').style.color = "#10B981";
+            document.getElementById('result-desc').innerText = `حصلت على ${score} من 10.`;
+            nextBtn.classList.remove('hidden');
+        } else if (currentStage >= 10 && score >= 8) {
+            document.getElementById('result-title').innerText = "مبروك! أنهيت جميع المراحل.";
+            document.getElementById('result-title').style.color = "#10B981";
+            document.getElementById('result-desc').innerText = `أنت الآن أستاذ في هذا المستوى.`;
+            nextBtn.classList.add('hidden');
+        } else {
+            document.getElementById('result-title').innerText = "انتهى الوقت أو لم تحقق النصاب!";
+            document.getElementById('result-title').style.color = "#EF4444";
+            document.getElementById('result-desc').innerText = `نتيجتك ${score} من 10. تحتاج 8 على الأقل للانتقال.`;
+            nextBtn.classList.add('hidden');
+        }
+    }
+
+    function nextStage() {
+        currentStage++;
+        document.getElementById('result-screen').classList.add('hidden');
+        startGame(currentLevel); 
+    }
+</script>
+</body>
+</html>
