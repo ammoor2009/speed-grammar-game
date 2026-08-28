@@ -6,18 +6,28 @@
     <title>تحدي الطلاقة النحوية</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #1E3A8A; --secondary: #D97706; --bg: #F3F4F6; --card: #FFFFFF; }
-        body { font-family: 'Tajawal', sans-serif; background-color: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #333; }
-        .container { background: var(--card); padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 600px; text-align: center; }
-        h1 { color: var(--primary); margin-bottom: 0.5rem; }
-        .btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 1.1rem; cursor: pointer; margin: 5px; transition: 0.3s; font-family: 'Tajawal', sans-serif;}
-        .btn:hover { background: #162861; transform: scale(1.05); }
-        .option-btn { background: var(--secondary); display: block; width: 100%; margin: 10px 0; font-size: 1.3rem; padding: 15px; }
-        .option-btn:hover { background: #B45309; }
-        #timer-bar-container { width: 100%; background: #e5e7eb; border-radius: 10px; height: 20px; margin: 20px 0; overflow: hidden; display: none; }
+        :root { 
+            --primary: #1E3A8A; /* كحلي كلاسيكي */
+            --secondary: #4D7C0F; /* أخضر زيتي */
+            --accent: #D4D4D8; /* بيج/رمادي فاتح */
+            --bg: #F3F4F6; 
+            --card: #FFFFFF; 
+            --text: #111827;
+        }
+        body { font-family: 'Tajawal', sans-serif; background-color: var(--bg); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: var(--text); }
+        .container { background: var(--card); padding: 2.5rem; border-radius: 20px; box-shadow: 0 15px 30px rgba(0,0,0,0.15); width: 90%; max-width: 650px; text-align: center; border-top: 5px solid var(--primary); }
+        h1 { color: var(--primary); margin-bottom: 0.5rem; font-size: 2.2rem; }
+        .btn { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 10px; font-size: 1.2rem; cursor: pointer; margin: 8px; transition: all 0.3s ease; font-family: 'Tajawal', sans-serif; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn:hover { background: #162861; transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+        .option-btn { background: var(--secondary); display: block; width: 100%; margin: 15px 0; font-size: 1.4rem; padding: 18px; border-radius: 12px; }
+        .option-btn:hover { background: #3f660c; }
+        
+        #timer-bar-container { width: 100%; background: var(--accent); border-radius: 10px; height: 25px; margin: 25px 0; overflow: hidden; display: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
         #timer-bar { height: 100%; background: #10B981; width: 100%; transition: width 1s linear, background 0.3s; }
+        
         .hidden { display: none !important; }
-        .question-text { font-size: 1.6rem; font-weight: bold; margin: 20px 0; line-height: 1.5; color: var(--primary); }
+        .question-text { font-size: 1.8rem; font-weight: bold; margin: 30px 0; line-height: 1.6; color: var(--primary); }
+        
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} }
         .wrong-shake { animation: shake 0.3s; background: #EF4444 !important; }
     </style>
@@ -26,8 +36,8 @@
 
 <div class="container" id="menu-screen">
     <h1>تحدي الطلاقة النحوية</h1>
-    <p>لديك 60 ثانية للإجابة على 10 أسئلة بشكل صحيح لتجاوز المرحلة.</p>
-    <div id="level-selection">
+    <p style="font-size: 1.2rem; color: #4B5563;">لديك 60 ثانية للإجابة على 10 أسئلة متجددة لاجتياز المرحلة.</p>
+    <div id="level-selection" style="margin-top: 30px;">
         <button class="btn" onclick="startGame('easy')">مستوى سهل</button>
         <button class="btn" onclick="startGame('medium')">مستوى متوسط</button>
         <button class="btn" onclick="startGame('hard')">مستوى صعب</button>
@@ -35,85 +45,115 @@
 </div>
 
 <div class="container hidden" id="game-screen">
-    <div style="display: flex; justify-content: space-between; font-weight: bold;">
+    <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.2rem; color: #4B5563;">
         <span id="stage-display">المرحلة: 1 / 10</span>
         <span id="score-display">النقاط: 0 / 10</span>
     </div>
     <div id="timer-bar-container"><div id="timer-bar"></div></div>
-    <div id="time-text" style="font-size:1.2rem; font-weight:bold; color:#EF4444;">60 ثانية</div>
-    <div class="question-text" id="question-text">جاري تحميل السؤال...</div>
+    <div id="time-text" style="font-size:1.4rem; font-weight:bold; color:#EF4444;">60 ثانية</div>
+    <div class="question-text" id="question-text">جاري بناء السؤال...</div>
     <div id="options-container"></div>
 </div>
 
 <div class="container hidden" id="result-screen">
-    <h2 id="result-title"></h2>
-    <p id="result-desc" style="font-size:1.2rem;"></p>
+    <h2 id="result-title" style="font-size: 2rem;"></h2>
+    <p id="result-desc" style="font-size:1.4rem; font-weight: bold;"></p>
     <button class="btn hidden" id="next-stage-btn" onclick="nextStage()">المرحلة التالية</button>
-    <button class="btn" onclick="location.reload()">العودة للرئيسية</button>
+    <button class="btn" onclick="location.reload()" style="background: var(--text);">العودة للرئيسية</button>
 </div>
 
 <script>
-    const QUESTIONS_BANK = {
-        'easy': [
-            {"q": "القصيدةُ الجاهليةُ ___ بالصور الفنية.", "options": ["مليئةٌ", "مليءٌ"], "answer": "مليئةٌ"},
-            {"q": "الفرزدقُ شاعرٌ ___ في الهجاء.", "options": ["مفلقٌ", "مفلقةٌ"], "answer": "مفلقٌ"},
-            {"q": "النصُّ السرديُّ ___ بعناية.", "options": ["مكتوبٌ", "مكتوبةٌ"], "answer": "مكتوبٌ"},
-            {"q": "اللغةُ العربيةُ ___ للتعبير عن أدق المشاعر.", "options": ["قادرةٌ", "قادرٌ"], "answer": "قادرةٌ"},
-            {"q": "هذا الطالبُ ___ في دراسة العروض.", "options": ["متميزٌ", "متميزةٌ"], "answer": "متميزٌ"},
-            {"q": "الفتاةُ ___ روايةً لنجيب محفوظ.", "options": ["قرأتْ", "قرأَ"], "answer": "قرأتْ"},
-            {"q": "الكتابُ ___ على الرف.", "options": ["موضوعٌ", "موضوعةٌ"], "answer": "موضوعٌ"},
-            {"q": "المحاضرةُ ___ غداً صباحاً.", "options": ["مقررةٌ", "مقررٌ"], "answer": "مقررةٌ"},
-            {"q": "العلمُ ___ طريقَ النجاح.", "options": ["يُنيرُ", "تُنيرُ"], "answer": "يُنيرُ"},
-            {"q": "الجامعةُ ___ أبوابها للباحثين.", "options": ["تفتحُ", "يفتحُ"], "answer": "تفتحُ"}
+    // محرك التوليد النحوي اللانهائي
+    const words = {
+        persons: [
+            { sM: "الشاعرُ", sF: "الشاعرةُ", dM: "الشاعران", dF: "الشاعرتان", pM: "الشعراءُ", pF: "الشاعراتُ", acc_dM: "الشاعرَين", acc_pM: "الشعراءَ" },
+            { sM: "الباحثُ", sF: "الباحثةُ", dM: "الباحثان", dF: "الباحثتان", pM: "الباحثون", pF: "الباحثاتُ", acc_dM: "الباحثَين", acc_pM: "الباحثين" },
+            { sM: "الناقدُ", sF: "الناقدةُ", dM: "الناقدان", dF: "الناقدتان", pM: "النقادُ", pF: "الناقداتُ", acc_dM: "الناقدَين", acc_pM: "النقادَ" },
+            { sM: "المعلمُ", sF: "المعلمةُ", dM: "المعلمان", dF: "المعلمتان", pM: "المعلمون", pF: "المعلماتُ", acc_dM: "المعلمَين", acc_pM: "المعلمين" },
+            { sM: "الروائيُ", sF: "الروائيةُ", dM: "الروائيان", dF: "الروائيتان", pM: "الروائيون", pF: "الروائياتُ", acc_dM: "الروائيَين", acc_pM: "الروائيين" }
         ],
-        'medium': [
-            {"q": "الباحثان في النقد ___ في تحليل النص.", "options": ["متعمقان", "متعمقين"], "answer": "متعمقان"},
-            {"q": "المهندساتُ ___ على تصميم المشروع.", "options": ["أشرفْنَ", "أشرفوا"], "answer": "أشرفْنَ"},
-            {"q": "رأيتُ الطالبتين ___ في المكتبة.", "options": ["تدرسان", "يدرسان"], "answer": "تدرسان"},
-            {"q": "المعلمون ___ رسالتهم بإخلاص.", "options": ["يؤدون", "يؤدين"], "answer": "يؤدون"},
-            {"q": "قرأتُ كتابين ___ في البلاغة.", "options": ["مفيدين", "مفيدان"], "answer": "مفيدين"},
-            {"q": "الشاعرتان ___ قصيدتين رائعتين.", "options": ["ألقتا", "ألقيا"], "answer": "ألقتا"},
-            {"q": "المثقفون ___ لبناء الوعي المجتمعي.", "options": ["يسعون", "يسعن"], "answer": "يسعون"},
-            {"q": "مررتُ بالباحثين ___ يناقشون الرسالة.", "options": ["الذين", "اللواتي"], "answer": "الذين"},
-            {"q": "القصيدتان ___ من بحر الطويل.", "options": ["منظومتان", "منظومتين"], "answer": "منظومتان"},
-            {"q": "الأستاذان ___ المحاضرة ببراعة.", "options": ["أدارا", "أداروا"], "answer": "أدارا"}
+        texts: [
+            { sM: "النصُّ", sF: "القصيدةُ", pM: "النصوصُ", pF: "القصائدُ" },
+            { sM: "الكتابُ", sF: "الروايةُ", pM: "الكتبُ", pF: "الرواياتُ" },
+            { sM: "البحثُ", sF: "المقالةُ", pM: "الأبحاثُ", pF: "المقالاتُ" },
+            { sM: "الديوانُ", sF: "الدراسةُ", pM: "الدواوينُ", pF: "الدراساتُ" }
         ],
-        'hard': [
-            {"q": "الجبالُ ___ تعكس شموخ الطبيعة.", "options": ["الشامخةُ", "الشامخون"], "answer": "الشامخةُ"},
-            {"q": "العمالُ ___ إنجاز المهام المطلوبة.", "options": ["أتمّوا", "أتمَّن"], "answer": "أتمّوا"},
-            {"q": "الأيامُ ___ كلمح البصر.", "options": ["تمضي", "يمضون"], "answer": "تمضي"},
-            {"q": "العلماءُ ___ مصابيحُ الدجى.", "options": ["العاملون", "العاملين"], "answer": "العاملون"},
-            {"q": "هذه الأبحاثُ ___ لطلاب الدراسات العليا.", "options": ["مخصصةٌ", "مخصصون"], "answer": "مخصصةٌ"},
-            {"q": "النساءُ ___ في بناء المجتمع.", "options": ["يشاركنَ", "يشاركون"], "answer": "يشاركنَ"},
-            {"q": "المقاييسُ العروضيةُ ___ لضبط الشعر.", "options": ["وُضِعتْ", "وُضِعوا"], "answer": "وُضِعتْ"},
-            {"q": "الرجالُ ___ يدافعون عن الحق.", "options": ["الأقوياءُ", "القوياتُ"], "answer": "الأقوياءُ"},
-            {"q": "الأشجارُ ___ ثمارها في الصيف.", "options": ["تُطرحُ", "يُطرحُ"], "answer": "تُطرحُ"},
-            {"q": "القصائدُ الطوالُ ___ بالمعلقات.", "options": ["تُسمّى", "يُسمَّون"], "answer": "تُسمّى"}
+        adjectives: [
+            { sM: "مبدعٌ", sF: "مبدعةٌ", dM: "مبدعان", dF: "مبدعتان", pM: "مبدعون", pF: "مبدعاتٌ", acc_dM: "مبدعَين", acc_pM: "مبدعين" },
+            { sM: "متميزٌ", sF: "متميزةٌ", dM: "متميزان", dF: "متميزتان", pM: "متميزون", pF: "متميزاتٌ", acc_dM: "متميزَين", acc_pM: "متميزين" },
+            { sM: "متعمقٌ", sF: "متعمقةٌ", dM: "متعمقان", dF: "متعمقتان", pM: "متعمقون", pF: "متعمقاتٌ", acc_dM: "متعمقَين", acc_pM: "متعمقين" },
+            { sM: "رائعٌ", sF: "رائعةٌ", dM: "رائعان", dF: "رائعتان", pM: "رائعون", pF: "رائعاتٌ", acc_dM: "رائعَين", acc_pM: "رائعين" }
+        ],
+        verbs: [
+            { sM: "يحللُ", sF: "تحللُ", pM: "يحللون", pF: "يحللْنَ" },
+            { sM: "يقرأُ", sF: "تقرأُ", pM: "يقرؤون", pF: "يقرأْنَ" },
+            { sM: "يكتبُ", sF: "تكتبُ", pM: "يكتبون", pF: "يكتبْنَ" },
+            { sM: "يبدعُ", sF: "تبدعُ", pM: "يبدعون", pF: "يبدعْنَ" }
+        ],
+        contexts: [
+            "في النقد الأدبي.", "في تحليل الخطاب.", "في دراسة العروض.", 
+            "على منصة المهرجان.", "بعناية فائقة.", "في الجامعة.", 
+            "أثناء المناقشة.", "في بناء النص السردي."
+        ],
+        numbers: [
+            { num_m: "ثلاثةُ", num_f: "ثلاثُ", counted_m: "باحثين", counted_f: "مقالاتٍ" },
+            { num_m: "أربعةُ", num_f: "أربعُ", counted_m: "شعراء", counted_f: "قصائد" },
+            { num_m: "خمسةُ", num_f: "خمسُ", counted_m: "كُتّابٍ", counted_f: "رواياتٍ" }
         ]
     };
 
-    for(let key in QUESTIONS_BANK){
-        let base = QUESTIONS_BANK[key];
-        QUESTIONS_BANK[key] = [].concat(base, base, base, base, base); 
+    function randomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+    function generateQuestion(level) {
+        let q = "", correct = "", wrong = "";
+        const person = randomItem(words.persons);
+        const text = randomItem(words.texts);
+        const adj = randomItem(words.adjectives);
+        const verb = randomItem(words.verbs);
+        const ctx = randomItem(words.contexts);
+
+        if (level === 'easy') {
+            const rule = Math.floor(Math.random() * 4);
+            if (rule === 0) { q = `${person.sM} ___ ${ctx}`; correct = adj.sM; wrong = adj.sF; }
+            else if (rule === 1) { q = `${person.sF} ___ ${ctx}`; correct = adj.sF; wrong = adj.sM; }
+            else if (rule === 2) { q = `هذا ${text.sM} ___ ${ctx}`; correct = adj.sM; wrong = adj.sF; }
+            else { q = `هذه ${text.sF} ___ ${ctx}`; correct = adj.sF; wrong = adj.sM; }
+        }
+        else if (level === 'medium') {
+            const rule = Math.floor(Math.random() * 4);
+            if (rule === 0) { q = `${person.dM} ___ ${ctx}`; correct = adj.dM; wrong = adj.acc_dM; }
+            else if (rule === 1) { q = `${person.dF} ___ ${ctx}`; correct = adj.dF; wrong = adj.dM; }
+            else if (rule === 2) { q = `${person.pM} ___ ${ctx}`; correct = adj.pM; wrong = adj.acc_pM; }
+            else { q = `إنّ ___ ${adj.dM}.`; correct = person.acc_dM; wrong = person.dM; }
+        }
+        else if (level === 'hard') {
+            const rule = Math.floor(Math.random() * 4);
+            if (rule === 0) { q = `${text.pM} الأدبيةُ ___ ${ctx}`; correct = adj.sF; wrong = adj.pM; }
+            else if (rule === 1) { q = `${person.pF} ___ ${ctx}`; correct = verb.pF; wrong = verb.pM; }
+            else if (rule === 2) { q = `إنّ ___ ${adj.pM}.`; correct = person.acc_pM; wrong = person.pM; }
+            else {
+                const num = randomItem(words.numbers);
+                if (Math.random() > 0.5) { q = `راجعَ المحكمون ___ ${num.counted_m}.`; correct = num.num_m; wrong = num.num_f; }
+                else { q = `قرأتُ ___ ${num.counted_f}.`; correct = num.num_f; wrong = num.num_m; }
+            }
+        }
+        return { q, options: [correct, wrong].sort(() => Math.random() - 0.5), answer: correct };
     }
 
     let currentLevel = '';
     let currentStage = 1;
-    let activeQuestions = [];
     let currentQIndex = 0;
     let score = 0;
     let timeLeft = 60;
     let timerInterval;
+    let askedQuestions = new Set(); // لمنع تكرار أي سؤال كلياً
 
     function startGame(level) {
         currentLevel = level;
         document.getElementById('menu-screen').classList.add('hidden');
         document.getElementById('game-screen').classList.remove('hidden');
         document.getElementById('timer-bar-container').style.display = 'block';
-        
-        let shuffled = [...QUESTIONS_BANK[level]].sort(() => 0.5 - Math.random());
-        activeQuestions = shuffled.slice(0, 10);
-        
+        askedQuestions.clear();
         startStage();
     }
 
@@ -142,15 +182,20 @@
     function loadQuestion() {
         if (currentQIndex >= 10) { endGame(true); return; }
         
-        const qData = activeQuestions[currentQIndex];
-        document.getElementById('question-text').innerText = qData.q;
+        let qData;
+        let attempts = 0;
+        do { // توليد سؤال جديد تماماً غير مسجل في الذاكرة
+            qData = generateQuestion(currentLevel);
+            attempts++;
+        } while (askedQuestions.has(qData.q) && attempts < 200);
         
+        askedQuestions.add(qData.q);
+        
+        document.getElementById('question-text').innerText = qData.q;
         const optsContainer = document.getElementById('options-container');
         optsContainer.innerHTML = '';
         
-        let opts = [...qData.options].sort(() => Math.random() - 0.5);
-        
-        opts.forEach(opt => {
+        qData.options.forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'btn option-btn';
             btn.innerText = opt;
@@ -188,19 +233,19 @@
         
         const nextBtn = document.getElementById('next-stage-btn');
         if (score >= 8 && currentStage < 10) {
-            document.getElementById('result-title').innerText = "رائع! اجتزت المرحلة.";
+            document.getElementById('result-title').innerText = "أداء رائع! اجتزت المرحلة.";
             document.getElementById('result-title').style.color = "#10B981";
             document.getElementById('result-desc').innerText = `حصلت على ${score} من 10.`;
             nextBtn.classList.remove('hidden');
         } else if (currentStage >= 10 && score >= 8) {
-            document.getElementById('result-title').innerText = "مبروك! أنهيت جميع المراحل.";
+            document.getElementById('result-title').innerText = "مبروك! أنهيت جميع المراحل بتميز.";
             document.getElementById('result-title').style.color = "#10B981";
             document.getElementById('result-desc').innerText = `أنت الآن أستاذ في هذا المستوى.`;
             nextBtn.classList.add('hidden');
         } else {
             document.getElementById('result-title').innerText = "انتهى الوقت أو لم تحقق النصاب!";
             document.getElementById('result-title').style.color = "#EF4444";
-            document.getElementById('result-desc').innerText = `نتيجتك ${score} من 10. تحتاج 8 على الأقل للانتقال.`;
+            document.getElementById('result-desc').innerText = `نتيجتك ${score} من 10. تحتاج 8 على الأقل.`;
             nextBtn.classList.add('hidden');
         }
     }
@@ -208,7 +253,8 @@
     function nextStage() {
         currentStage++;
         document.getElementById('result-screen').classList.add('hidden');
-        startGame(currentLevel); 
+        document.getElementById('game-screen').classList.remove('hidden');
+        startStage(); 
     }
 </script>
 </body>
