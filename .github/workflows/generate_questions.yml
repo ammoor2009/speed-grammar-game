@@ -22,7 +22,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install camel-tools
-          camel_data -i default
+          camel_data -i defaults
 
       - name: Run Question Generator
         run: python generate_questions.py
